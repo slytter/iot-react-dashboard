@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ec47c20a-823b-4200-8308-59ec804d61f6" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Components/Basic.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Components/Drawer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Components/Chart.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Components/Basic.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/Basic.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Components/Drawer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/Drawer.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -50,7 +55,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1587481250799</updated>
-      <workItem from="1587481257013" duration="1806000" />
+      <workItem from="1587481257013" duration="3321000" />
     </task>
     <servers />
   </component>

@@ -15,12 +15,13 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import PersonIcon from '@material-ui/icons/Person';
 import PowerIcon from '@material-ui/icons/Power';
 import SettingsIcon from '@material-ui/icons/Settings';
+import { Link } from "react-router-dom";
+import { Container } from '@material-ui/core'
+
 
 const drawerWidth = 240;
 
@@ -147,30 +148,41 @@ export default function MiniDrawer(props) {
 				</div>
 				<Divider />
 				<List>
-					<ListItem button>
-						<ListItemIcon> <PersonIcon/> </ListItemIcon>
-						<ListItemText primary={'Customer'} />
-					</ListItem>
-					<ListItem button>
-						<ListItemIcon> <SupervisorAccountIcon/> </ListItemIcon>
-						<ListItemText primary={'Administrator'} />
-					</ListItem>
-					<ListItem button>
-						<ListItemIcon><PowerIcon/></ListItemIcon>
-						<ListItemText primary={'Electricity Supplier'} />
-					</ListItem>
+					<Link to="/customer">
+						<ListItem button>
+							<ListItemIcon> <PersonIcon/> </ListItemIcon>
+							<ListItemText primary={'Customer'} />
+						</ListItem>
+					</Link>
+					<Link to="/admin">
+						<ListItem button>
+							<ListItemIcon> <SupervisorAccountIcon/> </ListItemIcon>
+							<ListItemText primary={'Administrator'} />
+						</ListItem>
+					</Link>
+					<Link to="/supplier">
+						<ListItem button>
+								<ListItemIcon><PowerIcon/></ListItemIcon>
+								<ListItemText primary={'Electricity Supplier'} />
+						</ListItem>
+					</Link>
+
 				</List>
 				<Divider />
 				<List>
-					<ListItem button>
-						<ListItemIcon><SettingsIcon/></ListItemIcon>
-						<ListItemText primary={'Settings'} />
-					</ListItem>
+					<Link to="/settings">
+						<ListItem button>
+							<ListItemIcon><SettingsIcon/></ListItemIcon>
+							<ListItemText primary={'Settings'} />
+						</ListItem>
+					</Link>
 				</List>
 			</Drawer>
 			<main className={classes.content}>
 				<div className={classes.toolbar} />
-				{props.children}
+				<Container>
+					{props.children}
+				</Container>
 			</main>
 		</div>
 	);
