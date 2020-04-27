@@ -2,8 +2,8 @@ module.exports = {
     getAuthToken: (userType) => {
         return localStorage.getItem(userType + '-token')
     },
-    setAuthToken: (userType, token) => {
-        localStorage.setItem(userType + '-token', JSON.stringify(token))
+    setAuthToken: (userType, userObj) => {
+        localStorage.setItem(userType + '-token', JSON.stringify(userObj))
     },
     logOut: (userType) => {
         localStorage.clear(userType + '-token')

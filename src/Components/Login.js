@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { TextField, Grid, Button } from '@material-ui/core'
 import auth from '../auth'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 export default class Login extends Component {
 
@@ -16,18 +17,46 @@ export default class Login extends Component {
             email: '',
             password: '',
             errorMessage: '',
+            loading: false,
         }
     }
 
     login = () => {
-        if(this.state.email && this.state.password){
-            const userType = auth.USER_TYPES[this.props.tokenType]
-            console.log({userType: this.props.tokenType})
-            auth.setAuthToken(this.props.tokenType, 'something')
-            this.props.onLogin()
-        }else{
+        this.setState({loading: true})
+        if(this.state.email && this.state.password || true){
+            fetch('https://smart-meter-app-iot.herokuapp.com/user-interface/login', {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: this.state.email || 'niec@itu.dk',
+                    password: this.state.password || 'heltsikkert12',
+                    signAs: this.props.tokenType,
+                })
+            }).then((response) => response.json())
+            .then((response) => {
+                this.setState({loading: false})
+                if(response && response.token) {
+                    const userType = auth.USER_TYPES[this.props.tokenType]
+                    console.log({userType: this.props.tokenType})
+                    auth.setAuthToken(this.props.tokenType, response)
+                    this.props.onLogin()
+                } else {
+                    this.setState({errorMessage: response.message})
+
+                }
+                
+                console.log({response})
+            }).catch(err => {
+                this.setState({loading: false})
+                
+                console.log({err})
+            })
+        } else {
             this.setState({errorMessage: 'Please enter email & password'})
         }
+
     }
 
     render() {
@@ -51,14 +80,14 @@ export default class Login extends Component {
                             name="password"
                             id="outlined-helperText"
                             label="Password"
-                            helperText="Input email"
+                            helperText="Input password"
                             variant="outlined"
                             value={this.state.password}
                             onChange={(event) => this.setState({password: event.target.value})}
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <Button onClick={this.login} size="large" elevation={11} variant="contained" color="primary">Login</Button>
+                        <Button startIcon={this.state.loading && <CircularProgress size={20} color="secondary" />} onClick={this.login} size="large" elevation={11} variant="contained" color="primary">Login</Button>
                     </Grid>
                     <Grid item xs={12}>
                         {this.state.errorMessage}

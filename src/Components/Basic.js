@@ -83,6 +83,8 @@ class Basic extends Component {
 								{auth.getAuthToken(auth.USER_TYPES.ADMIN)
 									? <Grid container spacing={2}>
 										<Grid item sm={12}>
+											{auth.getAuthToken(auth.USER_TYPES.ADMIN)}
+										
 											<Logout tokenType={auth.USER_TYPES.ADMIN} onLogout={this.updateThis}/>
 										</Grid>
 										<Grid item sm={12}>
