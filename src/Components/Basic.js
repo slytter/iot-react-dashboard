@@ -9,6 +9,12 @@ import {
 } from "react-router-dom";
 
 import Chart from './Chart'
+import moment from 'moment';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
 const Root = styled.div`
     
@@ -18,7 +24,22 @@ const Header = styled.div`
 	
 `
 
+
+
 class Basic extends Component {
+
+	constructor(props){
+		super(props)
+		this.state = {
+			users: [0,1,2,3],
+			chosenUser: 0,
+		}
+	}
+
+	componentDidMount(){
+		
+	}
+
 	render() {
 		return (
 			<Root>
@@ -29,7 +50,23 @@ class Basic extends Component {
 								<h1>
 									customer
 								</h1>
-								<Chart></Chart>
+								<FormControl variant="outlined" >
+									<InputLabel id="demo-simple-select-outlined-label">User</InputLabel>
+									<Select
+									value={this.state.chosenUser}
+									onChange={(event) => this.setState({chosenUser: event.target.value})}
+									label="User"
+									>
+									{
+										this.state.users.map((user) => <MenuItem key={user} value={user}>User {user}</MenuItem>)
+									}
+									</Select>
+								</FormControl>
+								<Chart 
+									id={this.state.chosenUser}
+									fromDate={moment().subtract(7, 'days')}
+									toDate={moment()}
+								/>
 							</Route>
 							<Route path="/admin">
 								admin
