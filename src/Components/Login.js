@@ -65,6 +65,7 @@ export default class Login extends Component {
                 <Grid container spacing={2}>
                     <Grid item xs={12} >
                         <TextField
+                            type="email"
                             name="email"
                             id="outlined-helperText"
                             label="Email"
@@ -77,6 +78,7 @@ export default class Login extends Component {
                     </Grid>
                     <Grid item xs={12} >
                         <TextField
+                            type="password"
                             name="password"
                             id="outlined-helperText"
                             label="Password"
