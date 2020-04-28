@@ -91,23 +91,25 @@ export default class Customer extends Component {
                                         <br/>
                                         <Logout tokenType={auth.USER_TYPES.CUSTOMER} onLogout={this.props.onLogout}/>
                                     </Grid>
-                                    <Grid item sm={12} md={6} >
+                                    <Grid item sm={12} md={6} style={{paddingTop: 0}} >
+
                                         <List style={{
                                                 width: '100%',
                                                 overflowY: "auto",
                                                 maxHeight: 500,
+                                                paddingTop: '0 !important',
                                             }}>
-                                            <h3>
-                                                Customer
-                                            </h3>
 
-                                            <ListItemAvatar>
-                                                <Avatar>
-                                                    <PersonIcon />
-                                                </Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText primary={user.firstName + ' ' + user.lastName} secondary={"Average wh: " + user.avgWh} />
                                             <List>
+
+                                                <ListItem>
+                                                    <ListItemAvatar>
+                                                        <Avatar>
+                                                            <PersonIcon />
+                                                        </Avatar>
+                                                    </ListItemAvatar>
+                                                    <ListItemText primary={user.firstName + ' ' + user.lastName} secondary={"Average wh: " + user.avgWh} />
+                                                </ListItem>
                                                 <ListItem>
                                                     <Typography color="textSecondary">
                                                         Meter id: <b>{user.meterId}</b>
@@ -119,12 +121,11 @@ export default class Customer extends Component {
                                                     </Typography>
                                                 </ListItem>
                                                 <ListItem>
-                                                    <Typography color="textSecondary" h2>
+                                                    <Typography color="textSecondary">
                                                         Address: <b>{user.address}</b>
                                                     </Typography>
                                                 </ListItem>
                                             </List>
-                            
                                         </List>
                                     </Grid>
                                 </Grid>
@@ -134,7 +135,7 @@ export default class Customer extends Component {
                     <Grid item sm={12} >
                         <Card elevation={2}>
                             <CardContent >
-                                <h2>Water usage of {chosenUserObejct && chosenUserObejct.firstName}</h2>
+                                <h2>Your power usage</h2>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={6} md={4}>
                                         <DatePicker  label="From date"
@@ -150,9 +151,10 @@ export default class Customer extends Component {
                                     </Grid>
                                 </Grid>
                                 {
-                                    this.state.chosenUser && <Chart 
-                                        token={this.state.login.token}
-                                        id={this.state.chosenUser}
+                                    <Chart 
+                                        type={auth.USER_TYPES.CUSTOMER}
+                                        token={'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJlbWFpbCI6Im5pZWNAaXR1LmRrIn0sImlhdCI6MTU4ODA4MjU3N30.0px-0DAJefhsXIWkpsPpQioaOolRV0-qnk6jBZod99g'}
+                                        id={user.meterId}
                                         fromDate={this.state.fromDate}
                                         toDate={this.state.toDate}
                                     />

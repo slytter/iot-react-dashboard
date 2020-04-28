@@ -115,7 +115,7 @@ export default class Admin extends Component {
                                             </h3>
                                                 {
                                                     this.state.users.map((user, i) => i < 3 ?
-                                                    <ExpansionPanel>
+                                                    <ExpansionPanel key={user.id}>
                                                         <ExpansionPanelSummary
                                                             expandIcon={<ExpandMoreIcon />}
                                                             aria-controls="panel1a-content"
@@ -146,7 +146,7 @@ export default class Admin extends Component {
                                                                         </Typography>
                                                                     </ListItem>
                                                                     <ListItem>
-                                                                        <Typography color="textSecondary" h2>
+                                                                        <Typography color="textSecondary">
                                                                             Address: <b>{user.address}</b>
                                                                         </Typography>
                                                                     </ListItem>
@@ -196,6 +196,7 @@ export default class Admin extends Component {
                                 </Grid>
                                 {
                                     this.state.chosenUser && <Chart 
+                                        type={auth.USER_TYPES.ADMIN}
                                         token={this.state.login.token}
                                         id={this.state.chosenUser}
                                         fromDate={this.state.fromDate}

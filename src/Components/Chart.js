@@ -3,17 +3,18 @@ import React, { Component } from 'react'
 import styled from 'styled-components'
 import moment from 'moment'
 import PropTypes from 'prop-types'
+import auth from '../auth'
 
 const baseData = [{
-		"id": "loading",
-		"color": "#3f51b5",
-		"data": [
-			{
-				"x": 'Loading',
-				"y": '...'
-			},
+	"id": "loading",
+	"color": "#3f51b5",
+	"data": [
+		{
+			"x": 'Loading',
+			"y": '...'
+		},
 
-		]
+	]
 }]
 
 const Root = styled.div`
@@ -37,9 +38,10 @@ const tranformData = (data) => {
 export default class Chart extends Component {
 	static propTypes = {
 		id: PropTypes.number,
-		fromDate: PropTypes.func,
-		toDate: PropTypes.func,
+		fromDate: PropTypes.any,
+		toDate: PropTypes.any,
 		token: PropTypes.string,
+		type: PropTypes.oneOf([auth.USER_TYPES.CUSTOMER, auth.USER_TYPES.ADMIN, auth.USER_TYPES.SUPPLIER]),
 	}
 
 	constructor(props){
@@ -49,7 +51,17 @@ export default class Chart extends Component {
 		}
 	}
 
-	getData = async (id, from, to) => {
+	getAdminData = async (id, from, to) => {
+		let response = await fetch (
+			`https://smart-meter-app-iot.herokuapp.com/admin/return-samples/${id}
+			?startDate=${from.format(dayFormat)}&endDate=${to.format(dayFormat)}
+			&secret_token=${this.props.token}`
+		);
+		let data = await response.json()
+		return data;
+	}
+
+	getCostumerData = async (id, from, to) => {
 		let response = await fetch (
 			`https://smart-meter-app-iot.herokuapp.com/admin/return-samples/${id}
 			?startDate=${from.format(dayFormat)}&endDate=${to.format(dayFormat)}
@@ -67,14 +79,18 @@ export default class Chart extends Component {
 			|| moment(prevProps.toDate).format(dayFormat) != moment(this.props.toDate).format(dayFormat)
 		)
 		{
-				this.updateStateWithData()
+			this.updateStateWithData()
 		}
 	}
 
 	updateStateWithData() {
+		const dataType = ({
+			[auth.USER_TYPES.CUSTOMER]: this.getCostumerData,
+			[auth.USER_TYPES.ADMIN]: this.getAdminData, 
+			[auth.USER_TYPES.SUPPLIER]: null
+		})[this.props.type]
 
-		console.log("Updating state with data", this.props)
-		this.getData(this.props.id, this.props.fromDate, this.props.toDate).then((data) => {
+		dataType(this.props.id, this.props.fromDate, this.props.toDate).then((data) => {
 			this.setState({
 				data: [{
 					"id": "User",

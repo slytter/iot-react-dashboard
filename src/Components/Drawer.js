@@ -93,6 +93,7 @@ export default function MiniDrawer(props) {
 	const classes = useStyles();
 	const theme = useTheme();
 	const [open, setOpen] = React.useState(true);
+	const [currentPath, setCurrentPath] = React.useState(window.location.pathname);
 
 	const handleDrawerOpen = () => {
 		setOpen(true);
@@ -101,6 +102,10 @@ export default function MiniDrawer(props) {
 	const handleDrawerClose = () => {
 		setOpen(false);
 	};
+
+	const updateCurrentPath = () => {
+		setCurrentPath(window.location.pathname)
+	} 
 
 	return (
 		<div className={classes.root}>
@@ -147,36 +152,38 @@ export default function MiniDrawer(props) {
 					</IconButton>
 				</div>
 				<Divider />
-				<List>
-					<Link to="/customer">
-						<ListItem button>
+				<List onClick={updateCurrentPath}>
+					<Link to="/customer" >
+						<ListItem button selected={currentPath === '/customer'}>
 							<ListItemIcon> <PersonIcon/> </ListItemIcon>
 							<ListItemText primary={'Customer'} />
 						</ListItem>
 					</Link>
-					<Link to="/admin">
-						<ListItem button>
+					
+					<Link to="/admin" >
+						<ListItem button selected={currentPath === '/admin'}>
 							<ListItemIcon> <SupervisorAccountIcon/> </ListItemIcon>
 							<ListItemText primary={'Administrator'} />
 						</ListItem>
 					</Link>
-					<Link to="/supplier">
-						<ListItem button>
-								<ListItemIcon><PowerIcon/></ListItemIcon>
-								<ListItemText primary={'Electricity Supplier'} />
-						</ListItem>
-					</Link>
-
 				</List>
 				<Divider />
-				<List>
+				<List onClick={updateCurrentPath}>
+					<Link to="/supplier" >
+						<ListItem button selected={currentPath === '/supplier'}>
+							<ListItemIcon><PowerIcon/></ListItemIcon>
+							<ListItemText primary={'Electricity Supplier'} />
+						</ListItem>
+					</Link>
+				</List>
+				{/* <List>
 					<Link to="/settings">
 						<ListItem button>
 							<ListItemIcon><SettingsIcon/></ListItemIcon>
 							<ListItemText primary={'Settings'} />
 						</ListItem>
 					</Link>
-				</List>
+				</List> */}
 			</Drawer>
 			<main className={classes.content}>
 				<div className={classes.toolbar} />
