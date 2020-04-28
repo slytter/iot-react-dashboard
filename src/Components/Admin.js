@@ -49,8 +49,29 @@ export default class Admin extends Component {
         )
 
         let data = await response.json()
+
+        for (let i = 0; i < data.result.length; i++) {
+          const whData = await this.getAverageWh(data.result[i].id)
+          console.log({whData})
+          data.result[i].avgWh = whData.avgWh
+          data.result[i].avgSpending = whData.avgSpending
+        }
+        
         return data.result
     }
+
+    getAverageWh = async (userId) => {
+        try{
+            let response = await fetch (
+                `https://smart-meter-app-iot.herokuapp.com/admin/avg-spending/${userId}?secret_token=${this.state.login.token}`
+            )
+            let data = await response.json()
+            console.log({data})
+            return data.result
+        } catch(e) { 
+            return 'could not get'
+        }
+    } 
 
 	componentDidMount() {
         this.getUsers().then((users) => {
@@ -105,10 +126,20 @@ export default class Admin extends Component {
                                                                         <PersonIcon />
                                                                     </Avatar>
                                                                 </ListItemAvatar>
-                                                                <ListItemText primary={user.firstName + ' ' + user.lastName} secondary={"Meter id: " + user.meterId} />
+                                                                <ListItemText primary={user.firstName + ' ' + user.lastName} secondary={`Average wattage: ${user.avgWh}kWh`} />
                                                             </ExpansionPanelSummary>
                                                             <ExpansionPanelDetails>
                                                                 <List>
+                                                                    <ListItem>
+                                                                        <Typography color="textSecondary">
+                                                                            Average daily spending: <b>{user.avgSpending} kr</b>
+                                                                        </Typography>
+                                                                    </ListItem>
+                                                                    <ListItem>
+                                                                        <Typography color="textSecondary">
+                                                                            Meter id: <b>{user.meterId}</b>
+                                                                        </Typography>
+                                                                    </ListItem>
                                                                     <ListItem>
                                                                         <Typography color="textSecondary">
                                                                             Email: <b>{user.email}</b>

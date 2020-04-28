@@ -34,7 +34,7 @@ export default class Login extends Component {
                     password: this.state.password || 'heltsikkert12',
                     signAs: this.props.tokenType,
                 })
-            }).then((response) => response.json())
+            }).catch(() => this.setState({errorMessage: 'Connection Error'})).then((response) => response.json())
             .then((response) => {
                 this.setState({loading: false})
                 if(response && response.token) {

@@ -11,6 +11,7 @@ import {
 import Login from './Login';
 import auth from '../auth';
 import Admin from './Admin';
+import Customer from './Customer';
 
 const Root = styled.div`
     
@@ -48,12 +49,17 @@ class Basic extends Component {
 					<Drawer>
 						<Switch>
 							<Route path="/customer">
-								<h1>
-									customer
-								</h1>
+								{auth.getAuthToken(auth.USER_TYPES.CUSTOMER)
+									? <Customer onLogout={this.updateThis} />
+									:	<> 
+										<h1>
+											Login as Customer
+										</h1>
+										<Login tokenType={auth.USER_TYPES.CUSTOMER} onLogin={this.updateThis} />
+									</>
+								}
 							</Route>
 							<Route path="/admin">
-
 								{auth.getAuthToken(auth.USER_TYPES.ADMIN)
 									? <Admin onLogout={this.updateThis} />
 									:	<> 

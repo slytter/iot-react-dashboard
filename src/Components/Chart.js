@@ -52,7 +52,7 @@ export default class Chart extends Component {
 	getData = async (id, from, to) => {
 		let response = await fetch (
 			`https://smart-meter-app-iot.herokuapp.com/admin/return-samples/${id}
-			?startDate=${from.format('YYYY-MM-DD')}&endDate=${to.format(dayFormat)}
+			?startDate=${from.format(dayFormat)}&endDate=${to.format(dayFormat)}
 			&secret_token=${this.props.token}`
 		);
 		let data = await response.json()
@@ -118,7 +118,7 @@ export default class Chart extends Component {
 				legendOffset: 36,
 				legendPosition: 'middle',
 				format: value => {
-					return moment(value, hourFormat).format('HH') === '00' ? moment(value).format('YYYY-MM-DD') : ''
+					return moment(value, hourFormat).format('HH') === '00' ? moment(value).format(dayFormat) : ''
 				}
 			}}
 			axisLeft={{
