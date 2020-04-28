@@ -34,46 +34,46 @@ export default class Customer extends Component {
 		this.state = {
 			chosenUser: null,
             login: auth.getAuthToken(auth.USER_TYPES.CUSTOMER),
+            spending: {
+                avg: '- ',
+                total: '- ',
+            },
             fromDate: moment().subtract(7, 'days'),
             toDate: moment(),
 		}
-        console.log(auth.getAuthToken(auth.USER_TYPES.CUSTOMER))
     }
     
     
-    getUsers = async () => {
-        let response = await fetch (
-            `https://smart-meter-app-iot.herokuapp.com/admin/return-users?secret_token=${this.state.login.token}`
-        )
-
-        let data = await response.json()
-
-        for (let i = 0; i < data.result.length; i++) {
-           data.result[i].avgWh = await this.getAverageWh(data.result[i].id)
-        }
-        
-        return data.result
-    }
-
     getAverageWh = async (userId) => {
         try{
-            console.log('FETCH')
             let response = await fetch (
-                `https://smart-meter-app-iot.herokuapp.com/admin/avg-wh/${userId}?secret_token=${this.state.login.token}`
+                `https://smart-meter-app-iot.herokuapp.com/customer/avg-spending?secret_token=${
+                    this.state.login.token
+                }&startDate=${
+                    moment().startOf('month').format('YYYY-MM-DD')
+                }&endDate=${
+                    moment().format('YYYY-MM-DD')
+                }`
             )
             let data = await response.json()
-            console.log('DID FETCH')
-            console.log({data})
             return data.result
         } catch(e) { 
             return e
         }
     } 
 
+    componentDidMount() {
+        this.getAverageWh(this.state.login.user.id).then((spending) =>{
+            this.setState({spending: {
+                avg: Math.round(spending.avgKWh * 10) / 10,
+                total: Math.round(spending.totalSpending * 10) / 10,
+            }})
+        })
+    }
+
     render() {
-        const { login, users, chosenUser } = this.state
+        const { login } = this.state
         const { user } = login
-        const chosenUserObejct = _.filter(users, user => chosenUser == user.id)[0]
         return login && (
             <div>
                 <Grid container spacing={2}>
@@ -108,11 +108,12 @@ export default class Customer extends Component {
                                                             <PersonIcon />
                                                         </Avatar>
                                                     </ListItemAvatar>
-                                                    <ListItemText primary={user.firstName + ' ' + user.lastName} secondary={"Average wh: " + user.avgWh} />
+                                                    <ListItemText primary={user.firstName + ' ' + user.lastName} secondary={`Monthly average wattage: ${this.state.spending.avg}kW`} />
+                                                    
                                                 </ListItem>
                                                 <ListItem>
                                                     <Typography color="textSecondary">
-                                                        Meter id: <b>{user.meterId}</b>
+                                                        This months spending: <b>{this.state.spending.total}kr</b>
                                                     </Typography>
                                                 </ListItem>
                                                 <ListItem>
@@ -153,7 +154,7 @@ export default class Customer extends Component {
                                 {
                                     <Chart 
                                         type={auth.USER_TYPES.CUSTOMER}
-                                        token={'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJlbWFpbCI6Im5pZWNAaXR1LmRrIn0sImlhdCI6MTU4ODA4MjU3N30.0px-0DAJefhsXIWkpsPpQioaOolRV0-qnk6jBZod99g'}
+                                        token={login.token}
                                         id={user.meterId}
                                         fromDate={this.state.fromDate}
                                         toDate={this.state.toDate}

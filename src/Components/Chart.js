@@ -53,17 +53,17 @@ export default class Chart extends Component {
 
 	getAdminData = async (id, from, to) => {
 		let response = await fetch (
-			`https://smart-meter-app-iot.herokuapp.com/admin/return-samples/${id}
-			?startDate=${from.format(dayFormat)}&endDate=${to.format(dayFormat)}
+			`https://smart-meter-app-iot.herokuapp.com/admin/return-samples/${id}?startDate=${from.format(dayFormat)}&endDate=${to.format(dayFormat)}
 			&secret_token=${this.props.token}`
 		);
 		let data = await response.json()
+		console.log({data})
 		return data;
 	}
 
 	getCostumerData = async (id, from, to) => {
 		let response = await fetch (
-			`https://smart-meter-app-iot.herokuapp.com/admin/return-samples/${id}
+			`https://smart-meter-app-iot.herokuapp.com/customer/return-samples
 			?startDate=${from.format(dayFormat)}&endDate=${to.format(dayFormat)}
 			&secret_token=${this.props.token}`
 		);

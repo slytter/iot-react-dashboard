@@ -53,8 +53,8 @@ export default class Admin extends Component {
         for (let i = 0; i < data.result.length; i++) {
           const whData = await this.getAverageWh(data.result[i].id)
           console.log({whData})
-          data.result[i].avgWh = whData.avgWh
-          data.result[i].avgSpending = whData.avgSpending
+          data.result[i].avgKWh = Math.round(whData.avgKWh * 10) / 10
+          data.result[i].totalSpending = Math.round(whData.totalSpending * 10) / 10
         }
         
         return data.result
@@ -63,7 +63,13 @@ export default class Admin extends Component {
     getAverageWh = async (userId) => {
         try{
             let response = await fetch (
-                `https://smart-meter-app-iot.herokuapp.com/admin/avg-spending/${userId}?secret_token=${this.state.login.token}`
+                `https://smart-meter-app-iot.herokuapp.com/admin/avg-spending/${userId}?secret_token=${
+                    this.state.login.token
+                }&startDate=${
+                    moment().startOf('month').format('YYYY-MM-DD')
+                }&endDate=${
+                    moment().format('YYYY-MM-DD')
+                }`
             )
             let data = await response.json()
             console.log({data})
@@ -126,13 +132,13 @@ export default class Admin extends Component {
                                                                         <PersonIcon />
                                                                     </Avatar>
                                                                 </ListItemAvatar>
-                                                                <ListItemText primary={user.firstName + ' ' + user.lastName} secondary={`Average wattage: ${user.avgWh}kWh`} />
+                                                                <ListItemText primary={user.firstName + ' ' + user.lastName} secondary={`Monthly average wattage: ${user.avgKWh}kW`} />
                                                             </ExpansionPanelSummary>
                                                             <ExpansionPanelDetails>
                                                                 <List>
                                                                     <ListItem>
                                                                         <Typography color="textSecondary">
-                                                                            Average daily spending: <b>{user.avgSpending} kr</b>
+                                                                            This months spending: <b>{user.totalSpending}kr</b>
                                                                         </Typography>
                                                                     </ListItem>
                                                                     <ListItem>
@@ -164,7 +170,7 @@ export default class Admin extends Component {
                     <Grid item sm={12} >
                         <Card elevation={2}>
                             <CardContent >
-                                <h2>Water usage of {chosenUserObejct && chosenUserObejct.firstName}</h2>
+                                <h2>Power usage of {chosenUserObejct && chosenUserObejct.firstName}</h2>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={6} md={4}>
                                         <br/>
