@@ -22,6 +22,17 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import { Link } from "react-router-dom";
 import { Container } from '@material-ui/core'
 
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+
+const customerTheme = createMuiTheme({
+	palette: {
+		primary: {
+			main: '#70b0ec',
+		},
+	}   
+})
+
+
 
 const drawerWidth = 240;
 
@@ -107,90 +118,120 @@ export default function MiniDrawer(props) {
 		setCurrentPath(window.location.pathname)
 	} 
 
+
+	const chosenTheme = ({
+		'/admin': createMuiTheme({
+			palette: {
+				primary: {
+					main: '#191f52',
+				},
+			}   
+		}), 
+		'/customer': createMuiTheme({
+			palette: {
+				primary: {
+					main: '#5D88BB',
+				},
+			}   
+		}),
+		'/supplier': createMuiTheme({
+			palette: {
+				primary: {
+					main: '#292733',
+				},
+			}   
+		}),
+	})[currentPath]
+
+	console.log(currentPath)
+
 	return (
+		<ThemeProvider theme={chosenTheme}>
 		<div className={classes.root}>
-			<CssBaseline />
-			<AppBar
-				position="fixed"
-				className={clsx(classes.appBar, {
-					[classes.appBarShift]: open,
-				})}
-			>
-				<Toolbar>
-					<IconButton
-						color="inherit"
-						aria-label="open drawer"
-						onClick={handleDrawerOpen}
-						edge="start"
-						className={clsx(classes.menuButton, {
-							[classes.hide]: open,
-						})}
-					>
-						<MenuIcon />
-					</IconButton>
-					<Typography variant="h6" noWrap>
-						Sensor controlpanel
-					</Typography>
-				</Toolbar>
-			</AppBar>
-			<Drawer
-				variant="permanent"
-				className={clsx(classes.drawer, {
-					[classes.drawerOpen]: open,
-					[classes.drawerClose]: !open,
-				})}
-				classes={{
-					paper: clsx({
+				<CssBaseline />
+				<AppBar
+					position="fixed"
+					className={clsx(classes.appBar, {
+						[classes.appBarShift]: open,
+					})}
+				>
+					<Toolbar>
+						<IconButton
+							color="inherit"
+							aria-label="open drawer"
+							onClick={handleDrawerOpen}
+							edge="start"
+							className={clsx(classes.menuButton, {
+								[classes.hide]: open,
+							})}
+						>
+							<MenuIcon />
+						</IconButton>
+						<Typography variant="h6" noWrap>
+							{({'/admin': 'Admin', '/customer': 'Customer', '/supplier': 'Supplier'})[currentPath]} controlpanel
+						</Typography>
+					</Toolbar>
+				</AppBar>
+				<Drawer
+					variant="permanent"
+					className={clsx(classes.drawer, {
 						[classes.drawerOpen]: open,
 						[classes.drawerClose]: !open,
-					}),
-				}}
-			>
-				<div className={classes.toolbar}>
-					<IconButton onClick={handleDrawerClose}>
-						{theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-					</IconButton>
-				</div>
-				<Divider />
-				<List onClick={updateCurrentPath}>
-					<Link to="/customer" >
-						<ListItem button selected={currentPath === '/customer'}>
-							<ListItemIcon> <PersonIcon/> </ListItemIcon>
-							<ListItemText primary={'Customer'} />
-						</ListItem>
-					</Link>
-					
-					<Link to="/admin" >
-						<ListItem button selected={currentPath === '/admin'}>
-							<ListItemIcon> <SupervisorAccountIcon/> </ListItemIcon>
-							<ListItemText primary={'Administrator'} />
-						</ListItem>
-					</Link>
-				</List>
-				<Divider />
-				<List onClick={updateCurrentPath}>
-					<Link to="/supplier" >
-						<ListItem button selected={currentPath === '/supplier'}>
-							<ListItemIcon><PowerIcon/></ListItemIcon>
-							<ListItemText primary={'Electricity Supplier'} />
-						</ListItem>
-					</Link>
-				</List>
-				{/* <List>
-					<Link to="/settings">
-						<ListItem button>
-							<ListItemIcon><SettingsIcon/></ListItemIcon>
-							<ListItemText primary={'Settings'} />
-						</ListItem>
-					</Link>
-				</List> */}
-			</Drawer>
-			<main className={classes.content}>
-				<div className={classes.toolbar} />
-				<Container>
-					{props.children}
-				</Container>
-			</main>
+					})}
+					classes={{
+						paper: clsx({
+							[classes.drawerOpen]: open,
+							[classes.drawerClose]: !open,
+						}),
+					}}
+				>
+					<div className={classes.toolbar}>
+						<IconButton onClick={handleDrawerClose}>
+							{theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+						</IconButton>
+					</div>
+					<Divider />
+					<List onClick={updateCurrentPath}>
+						<Link to="/customer" >
+							<ListItem button selected={currentPath === '/customer'}>
+								<ListItemIcon> <PersonIcon/> </ListItemIcon>
+								<ListItemText primary={'Customer'} />
+							</ListItem>
+						</Link>
+						
+						<Link to="/admin" >
+							<ListItem button selected={currentPath === '/admin'}>
+								<ListItemIcon> <SupervisorAccountIcon/> </ListItemIcon>
+								<ListItemText primary={'Administrator'} />
+							</ListItem>
+						</Link>
+					</List>
+					<Divider />
+					<List onClick={updateCurrentPath}>
+						<Link to="/supplier" >
+							<ListItem button selected={currentPath === '/supplier'}>
+								<ListItemIcon><PowerIcon/></ListItemIcon>
+								<ListItemText primary={'Electricity Supplier'} />
+							</ListItem>
+						</Link>
+					</List>
+					{/* <List>
+						<Link to="/settings">
+							<ListItem button>
+								<ListItemIcon><SettingsIcon/></ListItemIcon>
+								<ListItemText primary={'Settings'} />
+							</ListItem>
+						</Link>
+					</List> */}
+				</Drawer>
+				<main className={classes.content}>
+					<div className={classes.toolbar} />
+					<Container>
+						{props.children}
+					</Container>
+				</main>					
 		</div>
+
+		</ThemeProvider>
 	);
 }

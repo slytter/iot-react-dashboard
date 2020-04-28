@@ -57,7 +57,6 @@ export default class Chart extends Component {
 			&secret_token=${this.props.token}`
 		);
 		let data = await response.json()
-		console.log({data})
 		return data;
 	}
 
@@ -72,7 +71,6 @@ export default class Chart extends Component {
 	}
 	
 	componentDidUpdate(prevProps) {
-		console.log({prevProps}, this.props)
 		if(
 			(prevProps.id != this.props.id && this.props.id != -1) 
 			|| moment(prevProps.fromDate).format(dayFormat) != moment(this.props.fromDate).format(dayFormat)
@@ -94,7 +92,7 @@ export default class Chart extends Component {
 			this.setState({
 				data: [{
 					"id": "User",
-					"color": "#3f51b5",
+					"color": "hsl(136, 70%, 50%)",
 					data: tranformData(data),
 				}]
 			})
@@ -105,14 +103,12 @@ export default class Chart extends Component {
 	
 	
 	componentDidMount() {
-		console.log({DIDMOUNT: this.state.data})
 		this.updateStateWithData()
 	}
 
 	
 
 	render() {
-		console.log({RENDER: this.state.data})
 		if(!this.state.data){
 			return null
 		}

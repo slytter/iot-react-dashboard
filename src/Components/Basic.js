@@ -41,46 +41,46 @@ class Basic extends Component {
 		this.forceUpdate()
 	}
 
+
 	render() {
-		
 		return (
 			<Root>
 				<Router>
-					<Drawer>
-						<Switch>
-							<Route path="/customer">
-								{auth.getAuthToken(auth.USER_TYPES.CUSTOMER)
-									? <Customer onLogout={this.updateThis} />
-									:	<> 
-										<h1>
-											Login as Customer
-										</h1>
-										<Login tokenType={auth.USER_TYPES.CUSTOMER} onLogin={this.updateThis} />
-									</>
-								}
-							</Route>
-							<Route path="/admin">
-								{auth.getAuthToken(auth.USER_TYPES.ADMIN)
-									? <Admin onLogout={this.updateThis} />
-									:	<> 
-										<h1>
-											Login as Administrator
-										</h1>
-										<Login tokenType={auth.USER_TYPES.ADMIN} onLogin={this.updateThis} />
-									</>
-								}
-							</Route>
-							<Route path="/supplier">
-								supplier
-							</Route>
-							<Route path="/settings">
-								settings
-							</Route>
-							<Route path="/">
-								welcome
-							</Route>
-						</Switch>
-					</Drawer>
+						<Drawer>
+							<Switch>
+								<Route path="/customer">
+									{auth.getAuthToken(auth.USER_TYPES.CUSTOMER)
+										? <Customer onLogout={this.updateThis} />
+										:	<> 
+											<h1>
+												Login as Customer
+											</h1>
+											<Login tokenType={auth.USER_TYPES.CUSTOMER} onLogin={this.updateThis} />
+										</>
+									}
+								</Route>
+								<Route path="/admin">
+									{auth.getAuthToken(auth.USER_TYPES.ADMIN)
+										? <Admin onLogout={this.updateThis} />
+										:	<> 
+											<h1>
+												Login as Administrator
+											</h1>
+											<Login tokenType={auth.USER_TYPES.ADMIN} onLogin={this.updateThis} />
+										</>
+									}
+								</Route>
+								<Route path="/supplier">
+									supplier
+								</Route>
+								<Route path="/settings">
+									settings
+								</Route>
+								<Route path="/">
+									welcome
+								</Route>
+							</Switch>
+						</Drawer>
 				</Router>
 			</Root>
 		)
