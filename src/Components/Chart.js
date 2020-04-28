@@ -90,7 +90,7 @@ export default class Chart extends Component {
 	
 	componentDidMount() {
 		console.log({DIDMOUNT: this.state.data})
-		//this.updateStateWithData()
+		this.updateStateWithData()
 	}
 
 	
