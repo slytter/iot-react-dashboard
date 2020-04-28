@@ -1,5 +1,6 @@
 .App {
-  text-align: center;
+  font-family: 'Roboto' !important;
+
 }
 
 .App-logo {
@@ -40,4 +41,25 @@
 a {
   text-decoration: none;
   color: inherit;
+}
+
+.MuiCard-root {
+  border-radius: 8px !important;
+}
+
+.MuiButton-contained {
+  border-radius: 6px !important;
+  box-shadow: 0 4px 8px #00000049 !important;
+
+}
+.MuiExpansionPanelSummary-content.Mui-expanded {
+  margin: 20px 0 0px;
+}
+
+.MuiList-padding{
+  padding: 5px !important;
+}
+
+.MuiTypography-body1{
+  font-size: 14px !important;
 }

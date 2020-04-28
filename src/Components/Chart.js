@@ -21,29 +21,7 @@ const Root = styled.div`
 `
 
 const hourFormat = 'YYYY-MM-DD:HH:00'
-
-const generateDates = (from, to) => {
-    var dateArray = [];
-    var currentDate = moment(from);
-    var stopDate = moment(to);
-    while (currentDate <= stopDate) {
-        dateArray.push(moment(currentDate).format(hourFormat))
-        currentDate = moment(currentDate).add(1, 'hour');
-	}
-    return dateArray;
-
-}
-
-
-const getData = async (id, from, to) => {
-	let response = await fetch (
-		`https://smart-meter-app-iot.herokuapp.com/admin/return-samples/${id}
-		?startDate=${moment().subtract(7, 'days').format('YYYY-MM-DD')}&endDate=${moment().format('YYYY-MM-DD')}
-		&secret_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJlbWFpbCI6Im5pZWNAaXR1LmRrIn0sImlhdCI6MTU4ODAxMDg2MX0.g_W0e2sYJRYxcSeaLLY8sIPz0CkIzVPh9BKIrGIeRJs&fbclid=IwAR2EcWqFKUDuym3TF5QL7SQCWa_odNYOsy1G7YaJ8V8ui5cmXKi3B8G1ASU`
-	);
-	let data = await response.json()
-	return data;
-}
+const dayFormat = 'YYYY-MM-DD'
 
 const tranformData = (data) => {
 	const tranformation = data.result.smartMeterSamples.map((dataPoint, i) => {
@@ -61,6 +39,7 @@ export default class Chart extends Component {
 		id: PropTypes.number,
 		fromDate: PropTypes.func,
 		toDate: PropTypes.func,
+		token: PropTypes.string,
 	}
 
 	constructor(props){
@@ -70,34 +49,58 @@ export default class Chart extends Component {
 		}
 	}
 
-	async componentDidUpdate(prevProps) {
-		console.log(prevProps, this.props)
-		if(prevProps.id != this.props.id && this.props.id != -1) {
-			const data = await getData(this.props.id, this.props.fromDate, this.props.toDate)
-			console.log({data})
-			console.log(tranformData (data))
-			console.log(generateDates(this.props.fromDate, this.props.toDate))
+	getData = async (id, from, to) => {
+		let response = await fetch (
+			`https://smart-meter-app-iot.herokuapp.com/admin/return-samples/${id}
+			?startDate=${from.format('YYYY-MM-DD')}&endDate=${to.format(dayFormat)}
+			&secret_token=${this.props.token}`
+		);
+		let data = await response.json()
+		return data;
+	}
+	
+	componentDidUpdate(prevProps) {
+		console.log({prevProps}, this.props)
+		if(
+			(prevProps.id != this.props.id && this.props.id != -1) 
+			|| moment(prevProps.fromDate).format(dayFormat) != moment(this.props.fromDate).format(dayFormat)
+			|| moment(prevProps.toDate).format(dayFormat) != moment(this.props.toDate).format(dayFormat)
+		)
+		{
+				this.updateStateWithData()
+		}
+	}
+
+	updateStateWithData() {
+
+		console.log("Updating state with data", this.props)
+		this.getData(this.props.id, this.props.fromDate, this.props.toDate).then((data) => {
 			this.setState({
 				data: [{
 					"id": "User",
 					"color": "#3f51b5",
 					data: tranformData(data),
 				}]
-			}, () => {
 			})
-			console.log(baseData, this.state.data)
-	
-		}
+		})
+
 	}
+
+	
 	
 	componentDidMount() {
-		this.componentDidUpdate({prevProps:{id:-1}})
+		console.log({DIDMOUNT: this.state.data})
+		//this.updateStateWithData()
 	}
+
 	
 
 	render() {
+		console.log({RENDER: this.state.data})
+		if(!this.state.data){
+			return null
+		}
 		return <Root>
-		<h2>some chart</h2>
 		<ResponsiveLine
 			data={this.state.data || baseData}
 			margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
@@ -110,8 +113,8 @@ export default class Chart extends Component {
 				orient: 'bottom',
 				tickSize: 5,
 				tickPadding: 5,
-				tickRotation: 30,
-				legend: 'transportation',
+				tickRotation: 0,
+				legend: 'Time interval',
 				legendOffset: 36,
 				legendPosition: 'middle',
 				format: value => {
