@@ -98,8 +98,12 @@ export default class Chart extends Component {
 
 	getCostumerFromMeterId = (id) => {
 		const customer = _.filter(this.props.customers, cust => cust.meterId === id)
-		console.log({customer})
-		return id
+		if(customer.length > 0) { 
+			console.log({customer})
+			return id + ': ' + customer[0].firstName
+		} else { 
+			return id
+		}
 	}
 
 	async updateStateWithData () {
@@ -173,7 +177,7 @@ export default class Chart extends Component {
 				tickSize: 5,
 				tickPadding: 5,
 				tickRotation: 0,
-				legend: 'count',
+				legend: 'Watt',
 				legendOffset: -40,
 				legendPosition: 'middle'
 			}}
