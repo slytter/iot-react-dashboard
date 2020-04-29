@@ -17,6 +17,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import PersonIcon from '@material-ui/icons/Person';
+import HomeIcon from '@material-ui/icons/Home';
 import PowerIcon from '@material-ui/icons/Power';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { Link } from "react-router-dom";
@@ -190,6 +191,15 @@ export default function MiniDrawer(props) {
 							{theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
 						</IconButton>
 					</div>
+					<Divider />
+					<List onClick={updateCurrentPath}>
+						<Link to="/" >
+							<ListItem button selected={currentPath === '/'}>
+								<ListItemIcon> <HomeIcon/> </ListItemIcon>
+								<ListItemText primary={'Home'} />
+							</ListItem>
+						</Link>
+					</List>
 					<Divider />
 					<List onClick={updateCurrentPath}>
 						<Link to="/customer" >

@@ -16,10 +16,6 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import PersonIcon from '@material-ui/icons/Person'
 import Avatar from '@material-ui/core/Avatar'
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import DatePicker from '../DatePicker'
 
 
@@ -74,6 +70,7 @@ export default class Customer extends Component {
     render() {
         const { login } = this.state
         const { user } = login
+        console.log({user})
         return login && (
             <div>
                 <Grid container spacing={2}>

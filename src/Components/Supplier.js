@@ -11,12 +11,22 @@ import { Select, Grid, Card, CardContent } from '@material-ui/core'
 import Logout from './Logout'
 import auth from '../auth'
 import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import PersonIcon from '@material-ui/icons/Person'
+import Avatar from '@material-ui/core/Avatar'
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import DatePicker from '../DatePicker'
+import Checkbox from '@material-ui/core/Checkbox';
 import UserThump from './UserThump';
 
 
 
-export default class Admin extends Component {
+export default class Supplier extends Component {
     static propTypes = {
         onLogout: PropTypes.func,
     }
@@ -24,12 +34,13 @@ export default class Admin extends Component {
 	constructor(props){
 		super(props)
 		this.state = {
-			users: [],
+			customers: [],
+			admins: [],
 			chosenUser: null,
-            login: auth.getAuthToken(auth.USER_TYPES.ADMIN),
+            login: auth.getAuthToken(auth.USER_TYPES.SUPPLIER),
             fromDate: moment().subtract(7, 'days'),
             toDate: moment(),
-
+            displayDataForUsers: [],
 		}
 
     }
@@ -37,16 +48,16 @@ export default class Admin extends Component {
     
     getUsers = async () => {
         let response = await fetch (
-            `https://smart-meter-app-iot.herokuapp.com/admin/return-users?secret_token=${this.state.login.token}`
+            `https://smart-meter-app-iot.herokuapp.com/supplier?secret_token=${this.state.login.token}`
         )
 
         let data = await response.json()
 
-        for (let i = 0; i < data.result.length; i++) {
-          const whData = await this.getAverageWh(data.result[i].id)
+        for (let i = 0; i < data.result.customers.length; i++) {
+          const whData = await this.getAverageWh(data.result.customers[i].id)
           console.log({whData})
-          data.result[i].avgKWh = Math.round(whData.avgKWh * 10) / 10
-          data.result[i].totalSpending = Math.round(whData.totalSpending * 10) / 10
+          data.result.customers[i].avgKWh = whData && Math.round(whData.avgKWh * 10) / 10
+          data.result.customers[i].totalSpending = whData && Math.round(whData.totalSpending * 10) / 10
         }
         
         return data.result
@@ -55,7 +66,7 @@ export default class Admin extends Component {
     getAverageWh = async (userId) => {
         try{
             let response = await fetch (
-                `https://smart-meter-app-iot.herokuapp.com/admin/avg-spending/${userId}?secret_token=${
+                `https://smart-meter-app-iot.herokuapp.com/supplier/avg-spending/${userId}?secret_token=${
                     this.state.login.token
                 }&startDate=${
                     moment().startOf('month').format('YYYY-MM-DD')
@@ -64,7 +75,6 @@ export default class Admin extends Component {
                 }`
             )
             let data = await response.json()
-            console.log({data})
             return data.result
         } catch(e) { 
             return 'could not get'
@@ -72,17 +82,34 @@ export default class Admin extends Component {
     } 
 
 	componentDidMount() {
-        this.getUsers().then((users) => {
+        this.getUsers().then((data) => {
             this.setState({
-                users: users,
-                chosenUser: users[0].id,
+                admins: data.admins,
+                customers: data.customers,
             })
         })
+    }
+
+    returnCustomersFromAdmin = (adminId) => {
+        return _.filter(this.state.customers, cust => 
+            cust.adminId === adminId
+        )
+    }
+
+    toggleUserDataDisplay = (userId) => {
+        const { displayDataForUsers } = this.state
+        const index = (_.findIndex(displayDataForUsers, id => id === userId))
+        if(index !== -1) {
+            _.remove(displayDataForUsers, i => i === userId)
+        } else{
+            displayDataForUsers.push(userId)
+        }
+        this.setState({displayDataForUsers: [...displayDataForUsers ]})
     }
     
 
     render() {
-        const { login, users, chosenUser } = this.state
+        const { login, users, chosenUser, admins } = this.state
         const chosenUserObejct = _.filter(users, user => chosenUser == user.id)[0]
         return login && (
             <div>
@@ -99,24 +126,47 @@ export default class Admin extends Component {
                                             Email: <b>{login.user.email}</b>
                                         </Typography>
                                         <br/>
-                                        <Logout tokenType={auth.USER_TYPES.ADMIN} onLogout={this.props.onLogout}/>
+                                        <Logout tokenType={auth.USER_TYPES.SUPPLIER} onLogout={this.props.onLogout}/>
                                     </Grid>
                                     <Grid item sm={12} md={6} >
                                         <List style={{
                                                 width: '100%',
-                                                overflowY: "auto",
+                                                overflowY: "auto", 
                                                 maxHeight: 500,
                                             }}>
                                             <h3>
-                                                Administrator of
+                                                List of administrators
                                             </h3>
-                                                {
-                                                    this.state.users.map((user, i) => i < 3 ?
-                                                        <UserThump user={user} />
-                                                        : <p>...</p>
-                                                    )
-
-                                                }
+                                            <p>Chosen users:</p>
+                                            {
+                                                this.state.displayDataForUsers.map(userId => 
+                                                    <li>{userId}</li>
+                                                )
+                                            }
+                                            {
+                                                admins.map((admin) => 
+                                                    <ExpansionPanel>
+                                                        <ExpansionPanelSummary
+                                                            expandIcon={<ExpandMoreIcon />}
+                                                            aria-controls="panel1bh-content"
+                                                            id="panel1bh-header"
+                                                        >
+                                                            <Typography><b>{`${admin.firstName} ${admin.lastName + ' '}`}</b></Typography>
+                                                            <Typography>{`: Admin, id: ${admin.id}`}</Typography>
+                                                        </ExpansionPanelSummary>
+                                                        <ExpansionPanelDetails>
+                                                            <List>
+                                                                
+                                                                {this.returnCustomersFromAdmin(admin.id).map((cust) => <>
+                                                                    <UserThump user={cust} on><Checkbox onClick={() => this.toggleUserDataDisplay(cust.id)} /></UserThump>
+                                                                </>
+                                                                )}
+                                                            </List>
+                                                        </ExpansionPanelDetails>
+                                                    </ExpansionPanel>
+                                            
+                                                )
+                                            }
                                         </List>
                                     </Grid>
                                 </Grid>
@@ -137,9 +187,6 @@ export default class Admin extends Component {
                                             onChange={(event) => this.setState({chosenUser: event.target.value})}
                                             label="User"
                                             >
-                                            {
-                                                this.state.users.map((user) => <MenuItem key={user.id} value={user.id}>{user.meterId + ': ' + user.firstName + ' ' + user.lastName}</MenuItem>)
-                                            }
                                             </Select>
                                         </FormControl>
                                     </Grid>
@@ -158,7 +205,7 @@ export default class Admin extends Component {
                                 </Grid>
                                 {
                                     this.state.chosenUser && <Chart 
-                                        type={auth.USER_TYPES.ADMIN}
+                                        type={auth.USER_TYPES.SUPPLIER}
                                         token={this.state.login.token}
                                         id={this.state.chosenUser}
                                         fromDate={this.state.fromDate}

@@ -12,6 +12,8 @@ import Login from './Login';
 import auth from '../auth';
 import Admin from './Admin';
 import Customer from './Customer';
+import { Select, Grid, Card, CardContent } from '@material-ui/core'
+import Supplier from './Supplier';
 
 const Root = styled.div`
     
@@ -71,13 +73,27 @@ class Basic extends Component {
 									}
 								</Route>
 								<Route path="/supplier">
-									supplier
+									{auth.getAuthToken(auth.USER_TYPES.SUPPLIER)
+										? <Supplier onLogout={this.updateThis} />
+										: <Login tokenType={auth.USER_TYPES.SUPPLIER} onLogin={this.updateThis} />
+									}
 								</Route>
 								<Route path="/settings">
 									settings
 								</Route>
 								<Route path="/">
-									welcome
+								<Card>
+									<CardContent>
+										<h1>IoT Excerise 2 Dashboard</h1>
+										<h2>Implemented by:</h2>
+										<ul>
+											<li>Anton Sandberg</li>
+											<li>Nikolaj Schlüter</li>
+											<li>Sune Klem</li>
+										</ul>
+									</CardContent>
+								</Card>
+
 								</Route>
 							</Switch>
 						</Drawer>
