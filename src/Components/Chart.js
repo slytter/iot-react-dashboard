@@ -96,6 +96,12 @@ export default class Chart extends Component {
 		}
 	}
 
+	getCostumerFromMeterId = (id) => {
+		const customer = _.filter(this.props.customers, cust => cust.meterId === id)
+		console.log({customer})
+		return id
+	}
+
 	async updateStateWithData () {
 		const { id } = this.props
 		if(this.props.type === auth.USER_TYPES.SUPPLIER) {
@@ -103,15 +109,15 @@ export default class Chart extends Component {
 			for (let i = 0; i < id.length; i++) {
 				datas.push(await this.getSupplierData(id[i], this.props.fromDate, this.props.toDate))
 			}
-			console.log({datas})
+			console.log({customers: this.props.customers})
 			this.setState({
 				data: _.map(datas, (data, i) => ({
-					"id": "User " + i,
+					"id": this.getCostumerFromMeterId(id[i]),
 					"color": "hsl(136, 70%, 50%)",
 					data: tranformData(data),
 				}))
 			})
-		} else{
+		} else {
 			const dataType = ({
 				[auth.USER_TYPES.CUSTOMER]: this.getCostumerData,
 				[auth.USER_TYPES.ADMIN]: this.getAdminData, 
@@ -136,6 +142,7 @@ export default class Chart extends Component {
 	
 
 	render() {
+
 		if(!this.state.data){
 			return null
 		}
@@ -154,11 +161,11 @@ export default class Chart extends Component {
 				tickSize: 5,
 				tickPadding: 5,
 				tickRotation: 0,
-				legend: 'Time interval',
+				legend: `${moment(this.props.fromDate).format('ddd Do')} - ${moment(this.props.toDate).format('ddd Do')}`,
 				legendOffset: 36,
 				legendPosition: 'middle',
 				format: value => {
-					return moment(value, hourFormat).format('HH') === '00' ? moment(value).format(dayFormat) : ''
+					return moment(value, hourFormat).format('HH') === '00' ? moment(value).format('dddd, Do') : ''
 				}
 			}}
 			axisLeft={{

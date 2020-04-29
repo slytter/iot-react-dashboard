@@ -129,20 +129,14 @@ export default class Supplier extends Component {
                                         <Logout tokenType={auth.USER_TYPES.SUPPLIER} onLogout={this.props.onLogout}/>
                                     </Grid>
                                     <Grid item sm={12} md={6} >
+                                        <h2>
+                                            List of administrators
+                                        </h2>
                                         <List style={{
                                                 width: '100%',
                                                 overflowY: "auto", 
                                                 maxHeight: 500,
                                             }}>
-                                            <h3>
-                                                List of administrators
-                                            </h3>
-                                            <p>Chosen users:</p>
-                                            {
-                                                this.state.displayDataForUsers.map(userId => 
-                                                    <li>{userId}</li>
-                                                )
-                                            }
                                             {
                                                 admins.map((admin) => 
                                                     <ExpansionPanel>
