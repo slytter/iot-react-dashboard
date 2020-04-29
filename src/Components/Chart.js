@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import styled from 'styled-components'
 import moment from 'moment'
 import PropTypes from 'prop-types'
+import _ from 'lodash'
 import auth from '../auth'
 
 const baseData = [{
@@ -41,6 +42,7 @@ export default class Chart extends Component {
 		fromDate: PropTypes.any,
 		toDate: PropTypes.any,
 		token: PropTypes.string,
+		customers: PropTypes.array,
 		type: PropTypes.oneOf([auth.USER_TYPES.CUSTOMER, auth.USER_TYPES.ADMIN, auth.USER_TYPES.SUPPLIER]),
 	}
 
@@ -69,38 +71,63 @@ export default class Chart extends Component {
 		let data = await response.json()
 		return data;
 	}
+
+	getSupplierData = async (id, from, to) => {
+		let response = await fetch (
+			`https://smart-meter-app-iot.herokuapp.com/supplier/return-samples/${id}
+			?startDate=${from.format(dayFormat)}&endDate=${to.format(dayFormat)}
+			&secret_token=${this.props.token}`
+		);
+		let data = await response.json()
+		return data;
+	}
 	
 	componentDidUpdate(prevProps) {
+
 		if(
 			(prevProps.id != this.props.id && this.props.id != -1) 
 			|| moment(prevProps.fromDate).format(dayFormat) != moment(this.props.fromDate).format(dayFormat)
 			|| moment(prevProps.toDate).format(dayFormat) != moment(this.props.toDate).format(dayFormat)
 		)
 		{
-			this.updateStateWithData()
+			this.updateStateWithData().then(() => {
+				console.log('fetch')
+			})
 		}
 	}
 
-	updateStateWithData() {
-		const dataType = ({
-			[auth.USER_TYPES.CUSTOMER]: this.getCostumerData,
-			[auth.USER_TYPES.ADMIN]: this.getAdminData, 
-			[auth.USER_TYPES.SUPPLIER]: null
-		})[this.props.type]
-
-		dataType(this.props.id, this.props.fromDate, this.props.toDate).then((data) => {
+	async updateStateWithData () {
+		const { id } = this.props
+		if(this.props.type === auth.USER_TYPES.SUPPLIER) {
+			const datas = []
+			for (let i = 0; i < id.length; i++) {
+				datas.push(await this.getSupplierData(id[i], this.props.fromDate, this.props.toDate))
+			}
+			console.log({datas})
 			this.setState({
-				data: [{
-					"id": "User",
+				data: _.map(datas, (data, i) => ({
+					"id": "User " + i,
 					"color": "hsl(136, 70%, 50%)",
 					data: tranformData(data),
-				}]
+				}))
 			})
-		})
-
-	}
-
+		} else{
+			const dataType = ({
+				[auth.USER_TYPES.CUSTOMER]: this.getCostumerData,
+				[auth.USER_TYPES.ADMIN]: this.getAdminData, 
+			})[this.props.type]
 	
+			dataType(this.props.id, this.props.fromDate, this.props.toDate).then((data) => {
+				this.setState({
+					data: [{
+						"id": "User " + id,
+						"color": "hsl(10, 70%, 50%)",
+						data: tranformData(data),
+					}]
+				})
+			})
+		}
+	}
 	
 	componentDidMount() {
 		this.updateStateWithData()
@@ -112,6 +139,7 @@ export default class Chart extends Component {
 		if(!this.state.data){
 			return null
 		}
+		console.log('rendering')
 		return <Root>
 		<ResponsiveLine
 			data={this.state.data || baseData}

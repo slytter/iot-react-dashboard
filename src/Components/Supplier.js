@@ -38,9 +38,9 @@ export default class Supplier extends Component {
 			admins: [],
 			chosenUser: null,
             login: auth.getAuthToken(auth.USER_TYPES.SUPPLIER),
-            fromDate: moment().subtract(7, 'days'),
+            fromDate: moment().subtract(3, 'days'),
             toDate: moment(),
-            displayDataForUsers: [],
+            displayDataForUsers: [1],
 		}
 
     }
@@ -156,9 +156,13 @@ export default class Supplier extends Component {
                                                         </ExpansionPanelSummary>
                                                         <ExpansionPanelDetails>
                                                             <List>
-                                                                
+                                                                {console.log('rendering')}
                                                                 {this.returnCustomersFromAdmin(admin.id).map((cust) => <>
-                                                                    <UserThump user={cust} on><Checkbox onClick={() => this.toggleUserDataDisplay(cust.id)} /></UserThump>
+                                                                    <UserThump user={cust} on>
+                                                                        <Checkbox 
+                                                                            checked={_.includes(this.state.displayDataForUsers, cust.id)} 
+                                                                            onChange={() => this.toggleUserDataDisplay(cust.id)} />
+                                                                    </UserThump>
                                                                 </>
                                                                 )}
                                                             </List>
@@ -179,18 +183,6 @@ export default class Supplier extends Component {
                                 <h2>Power usage of {chosenUserObejct && chosenUserObejct.firstName}</h2>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={6} md={4}>
-                                        <br/>
-                                        <FormControl variant="outlined" fullWidth>
-                                            <InputLabel>User</InputLabel>
-                                            <Select
-                                            value={this.state.chosenUser || 0}
-                                            onChange={(event) => this.setState({chosenUser: event.target.value})}
-                                            label="User"
-                                            >
-                                            </Select>
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item xs={12} sm={6} md={4}>
                                         <DatePicker  label="From date"
                                             selectedDate={this.state.fromDate}
                                             handleDateChange={date => this.setState({fromDate: moment(date)})}
@@ -204,12 +196,13 @@ export default class Supplier extends Component {
                                     </Grid>
                                 </Grid>
                                 {
-                                    this.state.chosenUser && <Chart 
+                                    <Chart 
                                         type={auth.USER_TYPES.SUPPLIER}
                                         token={this.state.login.token}
-                                        id={this.state.chosenUser}
+                                        id={this.state.displayDataForUsers}
                                         fromDate={this.state.fromDate}
                                         toDate={this.state.toDate}
+                                        customers={this.state.customers}
                                     />
                                 }
                             </CardContent>
