@@ -45,6 +45,7 @@ a {
 
 .MuiCard-root {
   border-radius: 8px !important;
+  background-color: #fdfdfd !important;
 }
 
 .MuiButton-contained {
@@ -66,8 +67,7 @@ a {
 
 
 .MuiExpansionPanel-root{
-  border-radius: 8px !important;
-  box-shadow: 2px 4px 7px #00000039 !important;
-
+  /* border-radius: 8px !important; */
+  box-shadow: 2px 2px 8px #201c4e45 !important;
 /* //  0px 2px 1px -1px rgba(0,0,0,0.2) */
 }

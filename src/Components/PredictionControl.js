@@ -89,6 +89,7 @@ export default class PredictionControl extends Component {
                 `
             );
             if(response.status == 200){
+                alert('Model trained')
                 const data = await response.json()
                 return data
             } else {
@@ -109,8 +110,8 @@ export default class PredictionControl extends Component {
 
         const { epochsNo, learningRate, hiddenLayers, windowSize } = this.state
         this.trainModel(1, epochsNo, learningRate, hiddenLayers, windowSize).then((data) => {
-            console.log({data})
             this.isModelTrained(1).then(res => {
+                console.log('TRAINDES: ' + res)
                 this.state.modelTrained = res
             })
         })

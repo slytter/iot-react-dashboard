@@ -113,22 +113,21 @@ export default class Chart extends Component {
 			for (let i = 0; i < id.length; i++) {
 				let supplierData = await this.getSupplierData(id[i], this.props.fromDate, this.props.toDate)
 				supplierData = tranformData(supplierData)
-				datas.push(supplierData)
 				if(this.props.predict) {
 					try{
 						let prediction = await this.predict(id[i])
-						prediction = tranformData(prediction)
-						datas.push(prediction)
-						console.log({prediction})
+						let [newSupplierData, newPrediction] = this.mapPredictionWithData(supplierData, prediction)
+						console.log(newSupplierData, newPrediction)
+						datas.push(newSupplierData)
+						datas.push(newPrediction)
 					} catch(e) {
-						console.log(e) 
-						alert(('Could not predict: ' + e && e.error ) || 'Unknown prediction error')
+						alert(('Could not predict: ' + (e && e.error) || e ) || 'Unknown prediction error')
 					}
+				}else{
+					datas.push(supplierData)
 				}
-				this.mapPredictionWithData(supplierData, null)
 				//console.log({prediction})
 			}
-
 
 			this.setState({
 				data: _.map(datas, (data, i) => ({
@@ -159,11 +158,18 @@ export default class Chart extends Component {
 
 
 	mapPredictionWithData = (realData, prediction) => {
-		console.log(realData, prediction)
 		const lastDate = realData[realData.length - 1].x
-		const nextTimeStamp = moment(lastDate, hourFormat).add(2, 'hours')
-		console.log({lastDate, nextTimeStamp})
-		 
+		const nextDate = moment(lastDate, hourFormat).add(1, 'h').format(hourFormat)
+		// copy realData:
+		let predictionsRes = [...realData]
+		let realDataRes = [...realData]
+		// null all element but the last:
+		predictionsRes = _.map(predictionsRes, (prediction, i) => ({x: i > predictionsRes.length - 2 ? prediction.x : null, y: prediction.y}))
+		// Add last entry
+		predictionsRes.push({x: nextDate, y: Math.round(prediction)})
+		realDataRes.push({x: nextDate, y: null})
+		console.log({predictionsRes})
+		return [realDataRes, predictionsRes]
 	}
 
 	
@@ -176,19 +182,12 @@ export default class Chart extends Component {
 			`https://smart-meter-app-iot.herokuapp.com/supplier/predict/${id}
 			?secret_token=${this.props.token}`
 		);
-
 		if(response.status != 200) {
-			console.log({response})
 			throw new Error(await response.json())
 		}
+
 		let data = await response.json()
-		data = _.map(data.predictions.prediction, (avg_Wh, i) => {
-			return {
-				date: data.predictions.next_day_timestamps[i],
-				wattsPerHour: avg_Wh,
-			}
-		})
-		return data;
+		return data.prediction;
 		// next_day_timestamps
     }
 
@@ -197,15 +196,12 @@ export default class Chart extends Component {
 
 	render() {
 
-		if(!this.state.data){
-			return null
-		}
 		return <Root>
 		<ResponsiveLine
 			data={this.state.data || baseData}
 			margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
 			xScale={{ type: 'point' }}
-			yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: true, reverse: false }}
+			// yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: true, reverse: false }}
 			axisTop={null}
 			axisRight={null}
 			motionStiffness={170}
