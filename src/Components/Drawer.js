@@ -144,8 +144,6 @@ export default function MiniDrawer(props) {
 		}),
 	})[currentPath]
 
-	console.log(currentPath)
-
 	return (
 		<ThemeProvider theme={chosenTheme}>
 		<div className={classes.root}>

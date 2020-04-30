@@ -50,6 +50,7 @@ export default class Supplier extends Component {
             fromDate: moment().subtract(3, 'days'),
             toDate: moment(),
             displayDataForUsers: [1],
+            predictionState: {},
 		}
 
     }
@@ -64,7 +65,6 @@ export default class Supplier extends Component {
 
         for (let i = 0; i < data.result.customers.length; i++) {
           const whData = await this.getAverageWh(data.result.customers[i].id)
-          console.log({whData})
           data.result.customers[i].avgKWh = whData && Math.round(whData.avgKWh * 10) / 10
           data.result.customers[i].totalSpending = whData && Math.round(whData.totalSpending * 10) / 10
         }
@@ -136,7 +136,7 @@ export default class Supplier extends Component {
                                         </Typography>
                                         <br/>
                                         <Logout tokenType={auth.USER_TYPES.SUPPLIER} onLogout={this.props.onLogout}/>
-                                        <PredictionControl />
+                                        <PredictionControl onPredictionStateChanged={(predictionState) => this.setState({predictionState})} />
                                     </Grid>
                                     <Grid item sm={12} md={6} >
                                         <TabIn>
@@ -153,6 +153,7 @@ export default class Supplier extends Component {
                                             <Container>
                                                 {
                                                     admins.map((admin) => 
+                                                    <div style={{padding: "2px 0"}}>
                                                         <ExpansionPanel>
                                                             <ExpansionPanelSummary
                                                                 expandIcon={<ExpandMoreIcon />}
@@ -164,7 +165,6 @@ export default class Supplier extends Component {
                                                             </ExpansionPanelSummary>
                                                             <ExpansionPanelDetails>
                                                                 <List>
-                                                                    {console.log('rendering')}
                                                                     {this.returnCustomersFromAdmin(admin.id).map((cust) => <>
                                                                         <UserThump user={cust} on>
                                                                             <Checkbox 
@@ -176,7 +176,7 @@ export default class Supplier extends Component {
                                                                 </List>
                                                             </ExpansionPanelDetails>
                                                         </ExpansionPanel>
-                                                
+                                                    </div>
                                                     )
                                                 }
                                             </Container>
@@ -206,6 +206,7 @@ export default class Supplier extends Component {
                                 </Grid>
                                 {
                                     <Chart 
+                                        predict={this.state.predictionState.enable}
                                         type={auth.USER_TYPES.SUPPLIER}
                                         token={this.state.login.token}
                                         id={this.state.displayDataForUsers}

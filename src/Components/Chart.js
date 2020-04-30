@@ -44,6 +44,7 @@ export default class Chart extends Component {
 		token: PropTypes.string,
 		customers: PropTypes.array,
 		type: PropTypes.oneOf([auth.USER_TYPES.CUSTOMER, auth.USER_TYPES.ADMIN, auth.USER_TYPES.SUPPLIER]),
+		predict: PropTypes.bool,
 	}
 
 	constructor(props){
@@ -83,11 +84,11 @@ export default class Chart extends Component {
 	}
 	
 	componentDidUpdate(prevProps) {
-
 		if(
 			(prevProps.id != this.props.id && this.props.id != -1) 
 			|| moment(prevProps.fromDate).format(dayFormat) != moment(this.props.fromDate).format(dayFormat)
 			|| moment(prevProps.toDate).format(dayFormat) != moment(this.props.toDate).format(dayFormat)
+			|| prevProps.predict != this.props.predict
 		)
 		{
 			this.updateStateWithData().then(() => {
@@ -110,25 +111,33 @@ export default class Chart extends Component {
 			const datas = []
 			const predictions = []
 			for (let i = 0; i < id.length; i++) {
-				const supplierData = await this.getSupplierData(id[i], this.props.fromDate, this.props.toDate)
-				console.log({supplierData:supplierData.result.smartMeterSamples})
-				// supplierData.result.smartMeterSamples
-				//const prediction = await this.predict(id[i])
-				//datas.push(prediction)
+				let supplierData = await this.getSupplierData(id[i], this.props.fromDate, this.props.toDate)
+				supplierData = tranformData(supplierData)
 				datas.push(supplierData)
+				if(this.props.predict) {
+					try{
+						let prediction = await this.predict(id[i])
+						prediction = tranformData(prediction)
+						datas.push(prediction)
+						console.log({prediction})
+					} catch(e) {
+						console.log(e) 
+						alert(('Could not predict: ' + e && e.error ) || 'Unknown prediction error')
+					}
+				}
+				this.mapPredictionWithData(supplierData, null)
 				//console.log({prediction})
 			}
 
-			console.log()
 
 			this.setState({
 				data: _.map(datas, (data, i) => ({
 					"id": this.getCostumerFromMeterId(id[i] || 'prediction ' + i),
 					"color": "hsl(136, 70%, 50%)",
-					data: tranformData(data),
+					data: (data),
 				}))
 			}, () => {
-				console.log({dat: this.state.data})
+				//console.log({dat: this.state.data})
 			})
 		} else {
 			const dataType = ({
@@ -145,10 +154,18 @@ export default class Chart extends Component {
 					}]
 				})
 			})
-
-			
 		}
 	}
+
+
+	mapPredictionWithData = (realData, prediction) => {
+		console.log(realData, prediction)
+		const lastDate = realData[realData.length - 1].x
+		const nextTimeStamp = moment(lastDate, hourFormat).add(2, 'hours')
+		console.log({lastDate, nextTimeStamp})
+		 
+	}
+
 	
 	componentDidMount() {
 		this.updateStateWithData()
@@ -159,15 +176,20 @@ export default class Chart extends Component {
 			`https://smart-meter-app-iot.herokuapp.com/supplier/predict/${id}
 			?secret_token=${this.props.token}`
 		);
+
+		if(response.status != 200) {
+			console.log({response})
+			throw new Error(await response.json())
+		}
 		let data = await response.json()
-		// next_day_timestamps
 		data = _.map(data.predictions.prediction, (avg_Wh, i) => {
 			return {
 				date: data.predictions.next_day_timestamps[i],
 				wattsPerHour: avg_Wh,
 			}
 		})
-		return {result:{smartMeterSamples: data}};
+		return data;
+		// next_day_timestamps
     }
 
 
@@ -178,7 +200,6 @@ export default class Chart extends Component {
 		if(!this.state.data){
 			return null
 		}
-		console.log('rendering')
 		return <Root>
 		<ResponsiveLine
 			data={this.state.data || baseData}
@@ -210,11 +231,12 @@ export default class Chart extends Component {
 				legendPosition: 'middle'
 			}}
 			colors={{ scheme: 'nivo' }}
-			pointSize={10}
+			pointSize={3}
 			pointColor={{ theme: 'background' }}
-			pointBorderWidth={2}
+			pointBorderWidth={3}
 			pointBorderColor={{ from: 'serieColor' }}
 			pointLabel="y"
+			enableGridX={false}
 			pointLabelYOffset={-12}
 			useMesh={true}
 			legends={[
