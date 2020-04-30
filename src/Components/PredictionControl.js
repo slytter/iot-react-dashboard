@@ -11,6 +11,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
 import Typography from '@material-ui/core/Typography'
 import CloudDoneIcon from '@material-ui/icons/CloudDone'
 import ErrorIcon from '@material-ui/icons/Error'
+import LoopIcon from '@material-ui/icons/Loop'
 
 const Root = styled.div`
     padding: 20px 0;
@@ -56,7 +57,8 @@ export default class PredictionControl extends Component {
             isTraining: false,
         }
         this.isModelTrained(1).then(res => {
-            this.state.modelTrained = res
+            console.log({res})
+            this.setState({modelTrained: res})
         })
         
     }
@@ -66,6 +68,9 @@ export default class PredictionControl extends Component {
 			`https://smart-meter-app-iot.herokuapp.com/supplier/predict/${id}
 			?secret_token=${this.state.login.token}`
         );
+        if(response.status == 503) { 
+            return 'TRAINING'
+        }
         return (response.status == 200)
     }
     
@@ -135,19 +140,30 @@ export default class PredictionControl extends Component {
     render() {
         return (
             <Root>
-                {this.state.modelTrained 
-                ? <>
-                    <IconWrapper>
-                        <CloudDoneIcon fontSize="small"/>
-                        <TrainedText>Model trained</TrainedText> 
-                    </IconWrapper>
-                </>
-                : <>
-                    <IconWrapper>
-                        <ErrorIcon fontSize="small" color="secondary" />
-                        <TrainedText>Model not trained</TrainedText> 
-                    </IconWrapper>
-                </>}
+                {!!this.state.modelTrained}
+                {
+                    this.state.modelTrained === 'TRAINING' 
+                    ? <>
+                        <IconWrapper>
+                            <LoopIcon fontSize="small"/>
+                            <TrainedText>Model training</TrainedText> 
+                        </IconWrapper>
+                    </>
+                    : (this.state.modelTrained 
+                        ? <>
+                            <IconWrapper>
+                                <CloudDoneIcon fontSize="small"/>
+                                <TrainedText>Model trained</TrainedText> 
+                            </IconWrapper>
+                        </>
+                        : <>
+                            <IconWrapper>
+                                <ErrorIcon fontSize="small" color="secondary" />
+                                <TrainedText>Model not trained</TrainedText> 
+                            </IconWrapper>
+                        </>
+                    )
+                }
                 <div>
                     <ExpansionPanel>
                         <ExpansionPanelSummary
