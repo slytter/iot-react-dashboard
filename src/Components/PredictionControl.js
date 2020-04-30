@@ -68,7 +68,7 @@ export default class PredictionControl extends Component {
 			`https://smart-meter-app-iot.herokuapp.com/supplier/predict/${id}
 			?secret_token=${this.state.login.token}`
         );
-        if(response.status == 503) { 
+        if(response.status == 204) { 
             return 'TRAINING'
         }
         return (response.status == 200)
@@ -105,7 +105,7 @@ export default class PredictionControl extends Component {
                     }
                 `
             );
-            if(response.status == 503) { 
+            if(response.status == 204) { 
                 alert('Model already training')
                 return null
             }
