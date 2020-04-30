@@ -5,6 +5,7 @@ import moment from 'moment'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import auth from '../auth'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 const baseData = [{
 	"id": "loading",
@@ -20,6 +21,20 @@ const baseData = [{
 
 const Root = styled.div`
 	height: 500px;
+	position: relative;
+`
+
+const Loading = styled.div`
+	position:absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(255, 255, 255, 0.6);
+	z-index: 2000;
 `
 
 const hourFormat = 'YYYY-MM-DD:HH:00'
@@ -45,6 +60,7 @@ export default class Chart extends Component {
 		customers: PropTypes.array,
 		type: PropTypes.oneOf([auth.USER_TYPES.CUSTOMER, auth.USER_TYPES.ADMIN, auth.USER_TYPES.SUPPLIER]),
 		predict: PropTypes.bool,
+		isLoading: false,
 	}
 
 	constructor(props){
@@ -106,6 +122,7 @@ export default class Chart extends Component {
 	}
 
 	async updateStateWithData () {
+		this.setState({isLoading: true,})
 		const { id } = this.props
 		if(this.props.type === auth.USER_TYPES.SUPPLIER) {
 			const datas = []
@@ -134,9 +151,10 @@ export default class Chart extends Component {
 					"id": this.getCostumerFromMeterId(id[i] || 'Prediction ' + i),
 					"color": "hsl(136, 70%, 50%)",
 					data: (data),
+					isLoading: false,
 				}))
 			}, () => {
-				//console.log({dat: this.state.data})
+				this.setState({isLoading: false,})
 			})
 		} else {
 			const dataType = ({
@@ -150,7 +168,11 @@ export default class Chart extends Component {
 						"id": "User " + id,
 						"color": "hsl(10, 70%, 50%)",
 						data: tranformData(data),
+						isLoading: false,
 					}]
+				}, () => {
+					this.setState({isLoading: false,})
+
 				})
 			})
 		}
@@ -197,6 +219,9 @@ export default class Chart extends Component {
 	render() {
 
 		return <Root>
+			{this.state.isLoading &&
+				<Loading><CircularProgress/></Loading>
+			}
 		<ResponsiveLine
 			data={this.state.data || baseData}
 			margin={{ top: 50, right: 110, bottom: 50, left: 60 }}

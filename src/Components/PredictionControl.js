@@ -6,11 +6,11 @@ import styled from 'styled-components'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
 import Typography from '@material-ui/core/Typography'
 import CloudDoneIcon from '@material-ui/icons/CloudDone'
-import ErrorIcon from '@material-ui/icons/Error';
+import ErrorIcon from '@material-ui/icons/Error'
 
 const Root = styled.div`
     padding: 20px 0;
@@ -97,7 +97,7 @@ export default class PredictionControl extends Component {
                         hiddenLayers
                     }&windowSize=${
                         windowSize
-                    }&meterId=0
+                    }
                 `
             );
             if(response.status == 503) { 
@@ -116,18 +116,17 @@ export default class PredictionControl extends Component {
             alert('Training error')
             alert(e)
         } finally { 
-            this.setState({isTraining: false})
         }
     }
-
+    
     handleModelTraining = () =>  {
         this.setState({isTraining: true})
-
+        
         const { epochsNo, learningRate, hiddenLayers, windowSize } = this.state
         this.trainModel(epochsNo, learningRate, hiddenLayers, windowSize).then((data) => {
             this.isModelTrained(1).then(res => {
                 console.log('TRAINDES: ' + res)
-                this.setState({modelTrained: res})
+                this.setState({isTraining: false, modelTrained: res})
             })
         })
     }
