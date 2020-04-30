@@ -23,7 +23,16 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import DatePicker from '../DatePicker'
 import Checkbox from '@material-ui/core/Checkbox';
 import UserThump from './UserThump';
+import PredictionControl from './PredictionControl';
+import styled from 'styled-components'
 
+const Container = styled.div`
+    padding: 12px 8px;
+`
+
+const TabIn = styled.div`
+    padding: 0 12px;
+` 
 
 
 export default class Supplier extends Component {
@@ -127,44 +136,50 @@ export default class Supplier extends Component {
                                         </Typography>
                                         <br/>
                                         <Logout tokenType={auth.USER_TYPES.SUPPLIER} onLogout={this.props.onLogout}/>
+                                        <PredictionControl />
                                     </Grid>
                                     <Grid item sm={12} md={6} >
-                                        <h2>
-                                            List of administrators
-                                        </h2>
+                                        <TabIn>
+                                            <h2>
+                                                List of administrators
+                                            </h2>
+                                            <Typography>Check of Customers to graph</Typography>
+                                        </TabIn>
                                         <List style={{
                                                 width: '100%',
                                                 overflowY: "auto", 
                                                 maxHeight: 500,
                                             }}>
-                                            {
-                                                admins.map((admin) => 
-                                                    <ExpansionPanel>
-                                                        <ExpansionPanelSummary
-                                                            expandIcon={<ExpandMoreIcon />}
-                                                            aria-controls="panel1bh-content"
-                                                            id="panel1bh-header"
-                                                        >
-                                                            <Typography><b>{`${admin.firstName} ${admin.lastName + ' '}`}</b></Typography>
-                                                            <Typography>{`: Admin, id: ${admin.id}`}</Typography>
-                                                        </ExpansionPanelSummary>
-                                                        <ExpansionPanelDetails>
-                                                            <List>
-                                                                {console.log('rendering')}
-                                                                {this.returnCustomersFromAdmin(admin.id).map((cust) => <>
-                                                                    <UserThump user={cust} on>
-                                                                        <Checkbox 
-                                                                            checked={_.includes(this.state.displayDataForUsers, cust.id)} 
-                                                                            onChange={() => this.toggleUserDataDisplay(cust.id)} />
-                                                                    </UserThump>
-                                                                </>
-                                                                )}
-                                                            </List>
-                                                        </ExpansionPanelDetails>
-                                                    </ExpansionPanel>
-                                            
-                                                )
-                                            }
+                                            <Container>
+                                                {
+                                                    admins.map((admin) => 
+                                                        <ExpansionPanel>
+                                                            <ExpansionPanelSummary
+                                                                expandIcon={<ExpandMoreIcon />}
+                                                                aria-controls="panel1bh-content"
+                                                                id="panel1bh-header"
+                                                            >
+                                                                <Typography><b>{`${admin.firstName} ${admin.lastName + ' '}`}</b></Typography>
+                                                                <Typography>{`: Admin, id: ${admin.id}`}</Typography>
+                                                            </ExpansionPanelSummary>
+                                                            <ExpansionPanelDetails>
+                                                                <List>
+                                                                    {console.log('rendering')}
+                                                                    {this.returnCustomersFromAdmin(admin.id).map((cust) => <>
+                                                                        <UserThump user={cust} on>
+                                                                            <Checkbox 
+                                                                                checked={_.includes(this.state.displayDataForUsers, cust.id)} 
+                                                                                onChange={() => this.toggleUserDataDisplay(cust.id)} />
+                                                                        </UserThump>
+                                                                    </>
+                                                                    )}
+                                                                </List>
+                                                            </ExpansionPanelDetails>
+                                                        </ExpansionPanel>
+                                                
+                                                    )
+                                                }
+                                            </Container>
                                         </List>
                                     </Grid>
                                 </Grid>

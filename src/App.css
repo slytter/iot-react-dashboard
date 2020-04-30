@@ -63,3 +63,11 @@ a {
 .MuiTypography-body1{
   font-size: 14px !important;
 }
+
+
+.MuiExpansionPanel-root{
+  border-radius: 8px !important;
+  box-shadow: 2px 4px 7px #00000039 !important;
+
+/* //  0px 2px 1px -1px rgba(0,0,0,0.2) */
+}

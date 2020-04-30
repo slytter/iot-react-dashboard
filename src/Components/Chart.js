@@ -91,7 +91,6 @@ export default class Chart extends Component {
 		)
 		{
 			this.updateStateWithData().then(() => {
-				console.log('fetch')
 			})
 		}
 	}
@@ -99,7 +98,6 @@ export default class Chart extends Component {
 	getCostumerFromMeterId = (id) => {
 		const customer = _.filter(this.props.customers, cust => cust.meterId === id)
 		if(customer.length > 0) { 
-			console.log({customer})
 			return id + ': ' + customer[0].firstName
 		} else { 
 			return id
@@ -110,16 +108,27 @@ export default class Chart extends Component {
 		const { id } = this.props
 		if(this.props.type === auth.USER_TYPES.SUPPLIER) {
 			const datas = []
+			const predictions = []
 			for (let i = 0; i < id.length; i++) {
-				datas.push(await this.getSupplierData(id[i], this.props.fromDate, this.props.toDate))
+				const supplierData = await this.getSupplierData(id[i], this.props.fromDate, this.props.toDate)
+				console.log({supplierData:supplierData.result.smartMeterSamples})
+				// supplierData.result.smartMeterSamples
+				//const prediction = await this.predict(id[i])
+				//datas.push(prediction)
+				datas.push(supplierData)
+				//console.log({prediction})
 			}
-			console.log({customers: this.props.customers})
+
+			console.log()
+
 			this.setState({
 				data: _.map(datas, (data, i) => ({
-					"id": this.getCostumerFromMeterId(id[i]),
+					"id": this.getCostumerFromMeterId(id[i] || 'prediction ' + i),
 					"color": "hsl(136, 70%, 50%)",
 					data: tranformData(data),
 				}))
+			}, () => {
+				console.log({dat: this.state.data})
 			})
 		} else {
 			const dataType = ({
@@ -136,12 +145,31 @@ export default class Chart extends Component {
 					}]
 				})
 			})
+
+			
 		}
 	}
 	
 	componentDidMount() {
 		this.updateStateWithData()
 	}
+
+	predict = async (id) => {
+		let response = await fetch (
+			`https://smart-meter-app-iot.herokuapp.com/supplier/predict/${id}
+			?secret_token=${this.props.token}`
+		);
+		let data = await response.json()
+		// next_day_timestamps
+		data = _.map(data.predictions.prediction, (avg_Wh, i) => {
+			return {
+				date: data.predictions.next_day_timestamps[i],
+				wattsPerHour: avg_Wh,
+			}
+		})
+		return {result:{smartMeterSamples: data}};
+    }
+
 
 	
 
