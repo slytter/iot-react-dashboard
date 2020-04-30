@@ -131,7 +131,7 @@ export default class Chart extends Component {
 
 			this.setState({
 				data: _.map(datas, (data, i) => ({
-					"id": this.getCostumerFromMeterId(id[i] || 'prediction ' + i),
+					"id": this.getCostumerFromMeterId(id[i] || 'Prediction ' + i),
 					"color": "hsl(136, 70%, 50%)",
 					data: (data),
 				}))

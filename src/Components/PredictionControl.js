@@ -9,6 +9,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography'
+import CloudDoneIcon from '@material-ui/icons/CloudDone'
+import ErrorIcon from '@material-ui/icons/Error';
 
 const Root = styled.div`
     padding: 20px 0;
@@ -16,9 +18,19 @@ const Root = styled.div`
 
 const Settings = styled.div`
     padding: 20px 20px 20px 0;
+    `
 
+const IconWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
 `
 
+const TrainedText = styled.div`
+    font-size: 12px;
+    margin-left: 10px;
+    display: inline;
+`
 
 export default class PredictionControl extends Component {
     static propTypes = {
@@ -72,7 +84,7 @@ export default class PredictionControl extends Component {
         // })
     }
 
-    async trainModel (id, epochsNo, learningRate, hiddenLayers, windowSize) {
+    async trainModel (epochsNo, learningRate, hiddenLayers, windowSize) {
         try{
             let response = await fetch (
                 `https://smart-meter-app-iot.herokuapp.com/supplier/generate-model?secret_token=${
@@ -85,9 +97,13 @@ export default class PredictionControl extends Component {
                         hiddenLayers
                     }&windowSize=${
                         windowSize
-                    }&meterId=${id}
+                    }&meterId=0
                 `
             );
+            if(response.status == 503) { 
+                alert('Model already training')
+                return null
+            }
             if(response.status == 200){
                 alert('Model trained')
                 const data = await response.json()
@@ -98,7 +114,6 @@ export default class PredictionControl extends Component {
             }
         }catch(e){
             alert('Training error')
-
             alert(e)
         } finally { 
             this.setState({isTraining: false})
@@ -109,10 +124,10 @@ export default class PredictionControl extends Component {
         this.setState({isTraining: true})
 
         const { epochsNo, learningRate, hiddenLayers, windowSize } = this.state
-        this.trainModel(1, epochsNo, learningRate, hiddenLayers, windowSize).then((data) => {
+        this.trainModel(epochsNo, learningRate, hiddenLayers, windowSize).then((data) => {
             this.isModelTrained(1).then(res => {
                 console.log('TRAINDES: ' + res)
-                this.state.modelTrained = res
+                this.setState({modelTrained: res})
             })
         })
     }
@@ -121,9 +136,19 @@ export default class PredictionControl extends Component {
     render() {
         return (
             <Root>
-                <h3>
-                    {this.state.modelTrained ? 'Model trained' : 'Model not trained'}
-                </h3>
+                {this.state.modelTrained 
+                ? <>
+                    <IconWrapper>
+                        <CloudDoneIcon fontSize="small"/>
+                        <TrainedText>Model trained</TrainedText> 
+                    </IconWrapper>
+                </>
+                : <>
+                    <IconWrapper>
+                        <ErrorIcon fontSize="small" color="secondary" />
+                        <TrainedText>Model not trained</TrainedText> 
+                    </IconWrapper>
+                </>}
                 <div>
                     <ExpansionPanel>
                         <ExpansionPanelSummary

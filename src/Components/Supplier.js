@@ -136,7 +136,13 @@ export default class Supplier extends Component {
                                         </Typography>
                                         <br/>
                                         <Logout tokenType={auth.USER_TYPES.SUPPLIER} onLogout={this.props.onLogout}/>
-                                        <PredictionControl onPredictionStateChanged={(predictionState) => this.setState({predictionState})} />
+                                        <PredictionControl onPredictionStateChanged={(predictionState) => {
+                                            if(predictionState.enable) { 
+                                                this.setState({predictionState, toDate: moment()})
+                                            } else { 
+                                                this.setState({predictionState})
+                                            }
+                                        }} />
                                     </Grid>
                                     <Grid item sm={12} md={6} >
                                         <TabIn>
@@ -201,6 +207,7 @@ export default class Supplier extends Component {
                                         <DatePicker label="To date"
                                                 selectedDate={this.state.toDate}
                                                 handleDateChange={date => this.setState({toDate: moment(date)})}
+                                                disabled={this.state.predictionState.enable}
                                             />
                                     </Grid>
                                 </Grid>

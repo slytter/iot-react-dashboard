@@ -8,9 +8,11 @@ import {
 
 export default function MaterialUIPickers(props) {
   return (
-    <MuiPickersUtilsProvider utils={DateFnsUtils} >
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Grid container justify="space-around">
         <KeyboardDatePicker
+          disableFuture
+          disabled={props.disabled}
           margin="normal"
           id="date-picker-dialog"
           label={props.label}
