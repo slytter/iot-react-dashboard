@@ -109,6 +109,7 @@ class Basic extends Component {
 											<Grid item sm={6} xs={12}>
 												<h1>Credentials</h1>
 												<h2>Customer credentials</h2>
+												<i>This information is not public to static web-crawlers</i>
 												<ul>
 													<li>
 														Anton Sandberg
@@ -165,6 +166,19 @@ class Basic extends Component {
 															</li>
 															<li>
 																Password: <b>heltsikkert12</b>
+															</li>
+														</ul>
+													</li>
+												</ul>
+												<ul>
+													<li>
+														Philippe Bonnet
+														<ul>
+															<li>
+																Email: <b>phbo@itu.dk</b>
+															</li>
+															<li>
+																Password: <b>jegerenigmeddeandre</b>
 															</li>
 														</ul>
 													</li>
