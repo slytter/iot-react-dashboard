@@ -23,6 +23,15 @@ const Header = styled.div`
 	
 `
 
+const A = styled.a`
+	text-decoration: underline;
+	transition: 0.2s ease-out;
+	opacity: 1;
+	:hover{
+		opacity: 0.5;
+	}
+`
+
 
 class Basic extends Component {
 
@@ -84,13 +93,99 @@ class Basic extends Component {
 								<Route path="/">
 								<Card>
 									<CardContent>
-										<h1>IoT Excerise 2 Dashboard</h1>
-										<h2>Implemented by:</h2>
-										<ul>
-											<li>Anton Sandberg</li>
-											<li>Nikolaj Schlüter</li>
-											<li>Sune Klem</li>
-										</ul>
+										<Grid container>
+											<Grid item sm={6} xs={12}>
+												<h1>IoT Excerise 2 Dashboard</h1>
+												<A target="_blank" href="https://github.com/neheren/iot-react-dashboard">Front-end repository</A>
+												<br/>
+												<A target="_blank" href="https://github.com/klem95/smart_meter_app_iot">Back-end repository</A>
+												<h2>Implemented by:</h2>
+												<ul>
+													<li>Anton Sandberg</li>
+													<li>Nikolaj Schlüter</li>
+													<li>Sune Klem</li>
+												</ul>
+											</Grid>
+											<Grid item sm={6} xs={12}>
+												<h1>Credentials</h1>
+												<h2>Customer credentials</h2>
+												<ul>
+													<li>
+														Anton Sandberg
+														<ul>
+															<li>
+																Email: <b>anos@itu.dk</b>
+															</li>
+															<li>
+																Password: <b>12345</b>
+															</li>
+														</ul>
+													</li>
+													<li>
+														Sune Klem
+														<ul>
+															<li>
+																Email: <b>sukl@itu.dk</b>
+															</li>
+															<li>
+																Password: <b>qwert</b>
+															</li>
+														</ul>
+													</li>
+													<li>
+														Nikolaj Schlüter
+														<ul>
+															<li>
+																Email: <b>nsni@itu.dk</b>
+															</li>
+															<li>
+																Password: <b>98765</b>
+															</li>
+														</ul>
+													</li>
+													<li>
+														John Wick
+														<ul>
+															<li>
+																Email: <b>jowi@itu.dk</b>
+															</li>
+															<li>
+																Password: <b>asdfg</b>
+															</li>
+														</ul>
+													</li>
+												</ul>
+												<h2>Admin credentials</h2>
+												<ul>
+													<li>
+														Niels Chemnitz
+														<ul>
+															<li>
+																Email: <b>niec@itu.dk</b>
+															</li>
+															<li>
+																Password: <b>heltsikkert12</b>
+															</li>
+														</ul>
+													</li>
+												</ul>
+												<h2>Electricity supplier credentials</h2>
+												<ul>
+													<li>
+														Sebastian Büttrich
+														<ul>
+															<li>
+																Email: <b>sbut@itu.dk</b>
+															</li>
+															<li>
+																Password: <b>detbliver12</b>
+															</li>
+														</ul>
+													</li>
+												</ul>
+											</Grid>
+										</Grid>
+
 									</CardContent>
 								</Card>
 
