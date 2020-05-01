@@ -23,7 +23,7 @@ export default class Login extends Component {
 
     login = () => {
         this.setState({loading: true})
-        if(this.state.email && this.state.password || true){
+        if(this.state.email && this.state.password){
             fetch('https://smart-meter-app-iot.herokuapp.com/user-interface/login', {
                 method: 'POST', 
                 headers: {
