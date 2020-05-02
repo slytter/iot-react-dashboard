@@ -159,7 +159,7 @@ export default class PredictionControl extends Component {
                         : <>
                             <IconWrapper>
                                 <ErrorIcon fontSize="small" color="secondary" />
-                                <TrainedText>Model not trained</TrainedText> 
+                                <TrainedText>Model not trained </TrainedText> 
                             </IconWrapper>
                         </>
                     )
@@ -211,14 +211,15 @@ export default class PredictionControl extends Component {
                                         <Button fullWidth color="secondary" variant="contained" onClick={this.handleModelTraining} disabled={this.state.isTraining}>  
                                             {this.state.isTraining ? <><CircularProgress size={20} color="secondary"/> Training model</> : 'Train model'} 
                                         </Button>
-                                    </Grid>    
-                                </Grid>    
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TrainedText>
+                                            Model can train eventhough error panels are shown
+                                        </TrainedText>
+                                    </Grid>
+                                </Grid>
 
                             </Settings>
-                            <Settings>
-
-                            </Settings>
-
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
                 </div>

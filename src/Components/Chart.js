@@ -122,7 +122,7 @@ export default class Chart extends Component {
 	}
 
 	async updateStateWithData () {
-		this.setState({isLoading: true,})
+		this.setState({ isLoading: true, })
 		const { id } = this.props
 		if(this.props.type === auth.USER_TYPES.SUPPLIER) {
 			const datas = []
@@ -161,8 +161,12 @@ export default class Chart extends Component {
 				[auth.USER_TYPES.CUSTOMER]: this.getCostumerData,
 				[auth.USER_TYPES.ADMIN]: this.getAdminData, 
 			})[this.props.type]
-	
+
 			dataType(this.props.id, this.props.fromDate, this.props.toDate).then((data) => {
+				console.log(data.result.smartMeterSamples)
+				const sumOfPower = _.sum(data.result.smartMeterSamples, dat => dat.wattsPerHour)
+				console.log(sumOfPower)
+					
 				this.setState({
 					data: [{
 						"id": "User " + id,
@@ -219,9 +223,9 @@ export default class Chart extends Component {
 	render() {
 
 		return <Root>
-			{this.state.isLoading &&
-				<Loading><CircularProgress/></Loading>
-			}
+		{this.state.isLoading &&
+			<Loading><CircularProgress/></Loading>
+		}
 		<ResponsiveLine
 			data={this.state.data || baseData}
 			margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
@@ -256,7 +260,7 @@ export default class Chart extends Component {
 			pointColor={{ theme: 'background' }}
 			pointBorderWidth={3}
 			pointBorderColor={{ from: 'serieColor' }}
-			pointLabel="y"
+			pointLabel="Wattage"
 			enableGridX={false}
 			pointLabelYOffset={-12}
 			useMesh={true}
